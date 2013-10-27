@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function showMainMenu() {
+
+send "
+Welcome to the RFID login client!
+Please choose one of the available actions:
+	1) Authenticate
+	2) Grant privileges
+	3) Revoke privileges
+	4) Change main password
+	q) Exit the application
+"
+	choice=$(request "Please choose an action: " 1 2 3 4 q)
+
+	case $choice in
+	1) echo "authenticate" ;;
+	2) echo "grant" ;;
+	3) echo "revoke" ;;
+	4) echo "change-password" ;;
+	q) echo "quit" ;;
+	esac
+}

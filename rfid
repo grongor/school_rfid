@@ -1,0 +1,49 @@
+#!/bin/bash
+
+. src/shared/config
+. src/shared/basicFunctions
+. src/client/errorHandling
+. src/client/connectDaemon
+. src/client/menu
+
+
+# > $usersStorage
+# echo "grongor testgroup,testgroup2" >> $usersStorage
+# echo "someone testgroup" >> $usersStorage
+# echo "root testgroup,testgroup2,testgroup3" >> $usersStorage
+
+
+
+
+
+
+
+
+
+
+
+
+
+while true; do
+	action=$(showMainMenu)
+
+	case $action in
+	authenticate)    . src/client/actionAuthenticate ;;
+	grant)           . src/client/actionGrant ;;
+	revoke)          . src/client/actionRevoke ;;
+	change-password) . src/client/actionChangePassword ;;
+	quit)            exit 0 ;;
+	esac
+done
+
+printf "we are out of menu!\n\n"
+
+exit 0
+
+
+
+#su $(id -nu)
+id -nG
+$SHELL -c "su $(id -nu)"
+id -nG
+echo Prace ukoncena

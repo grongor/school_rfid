@@ -1,0 +1,70 @@
+Daemon must run as root - it must have privilege to add/remove users to/from
+certain groups. When client connects to the daemon then it is able to send commands.
+
+Available commands are:
+	authenticate *username*
+		If *username* is found then it waits for RFID card to be
+		read. If there is card assigned to given *username* user
+		is added to the appropriate group(s).
+		
+		Return messages:
+			USER_NOT_FOUND	User doesn't belong to any group
+			INSERT_CARD	Daemon is waiting for the card
+					to be read
+			CARD_TIMEOUT	Operation was aborted because
+					of card read timeout
+			OK		User was succesfully authenticated		
+			INVALID_CARD	Card doesn't match the given user
+ 
+	logout *username* [*group*{,..}]
+		Given user is logged out from the certain group(s).
+
+		Return messages:
+			OK		User was succesfully logged out
+			USER_NOT_FOUND	User doesn't belong to any group
+			INVALID_GROUP *group*{,..}
+					User doesn't belong to that group
+		
+	grant *username* *group*{,..} *mainPassword*
+		Grant's user ability to authenticate into given group(s).
+		When this command is issued, daemon will read RFID card to
+		assign it to appropriate user/group(s).
+
+		Return messages:
+			USER_NOT_FOUND	User doesn't belong to any group
+			INVALID_GROUP *group*,{,..}
+					Given group(s) doesn't exists
+			INVALID_PWD	Given main password is invalid
+			INSERT_CARD	Daemon is waiting for the card
+					to be read
+			CARD_TIMEOUT	Operation was aborted because of
+					card read timeout
+			OK		User was succesfully added
+					to the group(s)
+
+	revoke *username* [*group*{,..}] [allCards] *mainPassword*
+		Revoke's user ability to authenticate into given group(s).
+		
+		Return messages:
+			USER_NOT_FOUND	User doesn't belong to any group
+			INVALID_GROUP *group*,{,..}
+					Given group(s) doesn't exists
+			INVALID_PWD	Given main password is invalid
+			INSERT_CARD	Daemon is waiting for the card
+					to be read
+			CARD_TIMEOUT	Operation was aborted because of
+					card read timeout
+			OK		User was succesfully removed
+					from the group(s)
+
+	change-password *oldMainPassword* *newMainPassword*
+		Changes main password.
+
+		Return messages:
+			INVALID_OLD_PWD	Given old main password is invalid
+			INVALID_PWD	Given main password is invalid
+			OK		Main password was succesfully changed
+
+Keywords enclosed in stars [eg. *username*) are placeholders for certain parameters.
+Parameters enclosed in square brackets are optional.
+In case of missing or invalid parameters, BAD_REQUEST message is returned.

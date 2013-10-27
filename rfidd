@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. src/shared/config
+. src/shared/basicFunctions
+
+if [ "$1" != "startDaemon" ]; then
+	ncat -l -k localhost 9999 -c "$0 startDaemon"
+	exit 0
+fi
+
+while IFS=' ' read -a input; do
+	case ${input[0]} in
+	HELLO)           printf "authenticate,logout,grant,revoke,change-password\n" ;;
+	authenticate)    . src/daemon/actionAuthenticate ;;
+	logout)          . src/daemon/actionLogout ;;
+	grant)           . src/daemon/actionGrant ;;
+	revoke)          . src/daemon/actionRevoke ;;
+	change-password) . src/daemon/actionChangePassword ;;
+	*)               printf "BAD_REQUEST" ;;
+	esac
+done
+

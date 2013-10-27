@@ -1,0 +1,60 @@
+#!/bin/bash
+
+########## Search for the given username
+found=0
+
+while IFS=' ' read user cards; do
+	IFS=',' cards=($cards)
+
+	if [ "$user" = "${input[1]}" ]; then
+		found=1
+		break
+	fi
+done < $usersStorage
+
+### Username not found
+if [ $found -eq 0 ]; then
+	printf "USER_NOT_FOUND\n"
+	continue
+fi
+
+
+########## Username found, read a card
+printf "INSERT_CARD\n"
+
+# cardStatus: 0 => OK, 1 => invalid, 2 => timeout
+cardStatus=0
+while true; do
+	### @todo read the card
+
+	readCard="card1" #ok
+
+	inArray $readCard ${cards[@]}
+
+	[ $? -eq 1 ] && cardStatus=1
+	break
+done
+
+if [ $cardStatus -eq 0 ]; then
+	found=0
+	while IFS=' ' read card groups; do
+		IFS=',' groups=($groups)
+
+		if [ "$card" = "$readCard" ]; then
+			found=1
+			break
+		fi
+	done < $cardsStorage
+
+	if [ $found -eq 1 ]; then
+		printf "OK ${groups[*]}\n"
+	else
+		printf "OK\n"
+	fi
+elif [ $cardStatus -eq 1 ]; then
+	printf "INVALID_CARD\n";
+else
+	printf "READ_TIMEOUT\n"
+fi
+
+continue

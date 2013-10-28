@@ -1,16 +1,18 @@
 #!/bin/bash
 
+[[ ${#input[*]} -ne 3 ]] && printf "BAD_REQUEST\n" && continue
+
 read -a oldHashedInput <<< $(IFS=' '; sha512sum <<< ${input[1]})
 
 oldHashed=$(cat $passwordStorage)
 
-if [ "$oldHashed" != "$oldHashedInput" ]; then
-	printf "INVALID_OLD_PW\n"
+if [[ $oldHashed != $oldHashedInput ]]; then
+	printf "INVALID_OLD_PWD\n"
 	continue
 fi
 
-if [ ${#input[2]} -lt $minPasswordLen ]; then
-	printf "INVALID_PW\n"
+if [[ ${#input[2]} -lt $minPasswordLen ]]; then
+	printf "INVALID_PWD\n"
 	continue
 fi
 

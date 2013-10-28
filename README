@@ -13,17 +13,21 @@ Available commands are:
 					to be read
 			READ_TIMEOUT	Operation was aborted because
 					of card read timeout
-			OK		User was succesfully authenticated		
 			INVALID_CARD	Card doesn't match the given user
+			OK *sessionKey* *group*{,..}
+					User was succesfully authenticated		
  
-	logout *username* [*group*{,..}]
-		Given user is logged out from the certain group(s).
+	logout {*sessionKey*|*username* *mainPassword*}
+		User is logged out from his session identified by
+		*sessionKey*. If there are 2 parameters passed then all
+		*username* sessions are logged out. *mainPassword* is
+		required in that case.
 
 		Return messages:
+			INVALID_PWD	Given main password is invalid
+			USER_NOT_FOUND	User is not logged in
+			INVALID_KEY	Given *sessionKey* is invalid
 			OK		User was succesfully logged out
-			USER_NOT_FOUND	User doesn't belong to any group
-			INVALID_GROUP *group*{,..}
-					User doesn't belong to that group
 		
 	grant *username* *group*{,..} *mainPassword*
 		Grant's user ability to authenticate into given group(s).
@@ -31,10 +35,10 @@ Available commands are:
 		assign it to appropriate user/group(s).
 
 		Return messages:
-			USER_NOT_FOUND	User doesn't belong to any group
-			INVALID_GROUP *group*,{,..}
-					Given group(s) doesn't exists
 			INVALID_PWD	Given main password is invalid
+			USER_NOT_FOUND	User doesn't exists
+			INVALID_GROUP *group*,{,..}
+					Given group(s) doesn't 
 			INSERT_CARD	Daemon is waiting for the card
 					to be read
 			READ_TIMEOUT	Operation was aborted because of

@@ -1,19 +1,20 @@
 #!/bin/bash
 
+[[ ${#input[*]} -ne 2 ]] && printf "BAD_REQUEST\n" && continue
+
 ########## Search for the given username
 found=0
-
 while IFS=' ' read user cards; do
-	IFS=',' cards=($cards)
+	read -a cards <<< $(IFS=','; echo $cards)
 
-	if [ "$user" = "${input[1]}" ]; then
+	if [[ $user = ${input[1]} ]]; then
 		found=1
 		break
 	fi
 done < $usersStorage
 
 ### Username not found
-if [ $found -eq 0 ]; then
+if [[ $found -eq 0 ]]; then
 	printf "USER_NOT_FOUND\n"
 	continue
 fi
@@ -28,33 +29,41 @@ while true; do
 	### @todo read the card
 
 	readCard="card1" #ok
+	sleep 2
 
 	inArray $readCard ${cards[@]}
 
-	[ $? -eq 1 ] && cardStatus=1
+	[[ $? -eq 1 ]] && cardStatus=1
 	break
 done
 
 if [ $cardStatus -eq 0 ]; then
 	found=0
 	while IFS=' ' read card groups; do
-		IFS=',' groups=($groups)
+		groupsStr=$groups
+		read -a groups <<< $(IFS=','; echo $groups)
 
-		if [ "$card" = "$readCard" ]; then
+		if [[ $card = $readCard ]]; then
 			found=1
 			break
 		fi
 	done < $cardsStorage
 
-	if [ $found -eq 1 ]; then
-		printf "OK ${groups[*]}\n"
+	read -a sessionKey <<< $(IFS=' '; date +%s%Ns | md5sum)
+
+	exec 200>> $sessionsStorage
+	flock -x 200
+	IFS=',' echo "$sessionKey $user $groupsStr" >&200
+	flock -u 200
+	exec 200>&-
+
+	if [[ $found -eq 1 ]]; then
+		printf "OK $sessionKey $groupsStr\n"
 	else
 		printf "OK\n"
 	fi
-elif [ $cardStatus -eq 1 ]; then
+elif [[ $cardStatus -eq 1 ]]; then
 	printf "INVALID_CARD\n";
 else
 	printf "READ_TIMEOUT\n"
 fi
-
-continue

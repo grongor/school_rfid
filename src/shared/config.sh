@@ -9,3 +9,4 @@ port=9999
 usersStorage=data/users
 cardsStorage=data/cards
 passwordStorage=data/password
+sessionsStorage=data/sessions

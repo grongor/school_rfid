@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function send() {
-	[ -n "$1" ] && printf "$@" > /dev/tty
+	[[ -n "$1" ]] && printf "$@" > /dev/tty
 }
 
 function request() {
@@ -9,7 +9,7 @@ function request() {
 	local choices
 
 	send "$1"
-	if [ -z "$2" ]; then
+	if [[ -z "$2" ]]; then
 		read input < /dev/tty
 		echo $input
 	else
@@ -19,7 +19,7 @@ function request() {
 
 			inArray $input ${choices[@]}
 
-			if [ $? -eq 0 ]; then
+			if [[ $? -eq 0 ]]; then
 				echo $input
 				return 0
 			else
@@ -45,7 +45,7 @@ function inArray() {
 	local needle
 
 	for needle in "${@:2}"; do
-		[ "$needle" = "$1" ] && return 0
+		[[ $needle = "$1" ]] && return 0
 	done
 	
 	return 1

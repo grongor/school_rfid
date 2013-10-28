@@ -1,10 +1,10 @@
 #!/bin/bash
 
-. src/shared/config
-. src/shared/basicFunctions
-. src/client/errorHandling
-. src/client/connectDaemon
-. src/client/menu
+. src/shared/config.sh
+. src/shared/basicFunctions.sh
+. src/client/errorHandling.sh
+. src/client/connectDaemon.sh
+. src/client/menu.sh
 
 
 # > $usersStorage
@@ -28,10 +28,11 @@ while true; do
 	action=$(showMainMenu)
 
 	case $action in
-	authenticate)    . src/client/actionAuthenticate ;;
-	grant)           . src/client/actionGrant ;;
-	revoke)          . src/client/actionRevoke ;;
-	change-password) . src/client/actionChangePassword ;;
+	authenticate)    . src/client/actionAuthenticate.sh ;;
+	logout)          . src/client/actionLogout.sh ;;
+	grant)           . src/client/actionGrant.sh ;;
+	revoke)          . src/client/actionRevoke.sh ;;
+	change-password) . src/client/actionChangePassword.sh ;;
 	quit)            exit 0 ;;
 	esac
 done

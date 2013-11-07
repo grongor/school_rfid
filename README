@@ -1,5 +1,6 @@
-Daemon must run as root - it must have privilege to add/remove users to/from
-certain groups. When client connects to the daemon then it is able to send commands.
+DISCLAIMER: This projects was created because of my need to start Bash scripting. It hardly could be used in any real environment.
+
+Daemon must run as root - it must have privilege to add/remove users to/from certain groups. When client connects to the daemon then it is able to send commands.
 
 Available commands are:
 	authenticate *username*
@@ -17,7 +18,7 @@ Available commands are:
 			OK *sessionKey* *group*{,..}
 					User was succesfully authenticated		
  
-	logout {*sessionKey*|*username* *mainPassword*}
+	logout (*sessionKey*|*username* *mainPassword*)
 		User is logged out from his session identified by
 		*sessionKey*. If there are 2 parameters passed then all
 		*username* sessions are logged out. *mainPassword* is
@@ -29,37 +30,70 @@ Available commands are:
 			INVALID_KEY	Given *sessionKey* is invalid
 			OK		User was succesfully logged out
 		
-	grant *username* *group*{,..} *mainPassword*
-		Grant's user ability to authenticate into given group(s).
+	grant-user *username* *mainPassword*
+		Grant's user ability to authenticate with a card.
 		When this command is issued, daemon will read RFID card to
-		assign it to appropriate user/group(s).
+		assign it to given *username*.
 
 		Return messages:
 			INVALID_PWD	Given main password is invalid
 			USER_NOT_FOUND	User doesn't exists
+			INSERT_CARD	Daemon is waiting for the card
+					to be read
+			READ_TIMEOUT	Operation was aborted because of
+					card read timeout
+			OK		User was succesfully assigned
+					to the certain card
+
+	grant-card *group*{,..} *mainPassword*
+		Grant's card ability to operate with given groups(s).
+		When this command is issued, daemon will read RFID card to
+		assign it to given *group*(s).
+
+		Return messages:
+			INVALID_PWD	Given main password is invalid
 			INVALID_GROUP *group*,{,..}
 					Given group(s) doesn't 
 			INSERT_CARD	Daemon is waiting for the card
 					to be read
 			READ_TIMEOUT	Operation was aborted because of
 					card read timeout
-			OK		User was succesfully added
-					to the group(s)
+			OK		Given *group*(s) was succesfully
+					assigned to the certain card
 
-	revoke *username* [*group*{,..}] [allCards] *mainPassword*
-		Revoke's user ability to authenticate into given group(s).
-		
+	revoke-user *username* *mainPassword* [allCards]
+		Revoke's user ability to authenticate using certain card.
+		If *allCards* is passed then allCards are revoked.
+
 		Return messages:
-			USER_NOT_FOUND	User doesn't belong to any group
-			INVALID_GROUP *group*,{,..}
-					Given group(s) doesn't exists
 			INVALID_PWD	Given main password is invalid
+			USER_NOT_FOUND	User doesn't exists
 			INSERT_CARD	Daemon is waiting for the card
 					to be read
 			READ_TIMEOUT	Operation was aborted because of
 					card read timeout
-			OK		User was succesfully removed
-					from the group(s)
+			INVALID_CARD	This card doesn't belong to given user			
+			OK		Card(s) was succesfully removed
+					from the given *username*
+
+	revoke-card (*group*{...}|allGroups) *mainPassword*
+		Revoke's card ability to operate with given *group*(s).
+		If *allGroups* is passed instead of *group*(s), all
+		groups are revoked from the card.
+
+		Return messages:
+			INVALID_PWD	Given main password is invalid
+			INVALID_GROUP *group*,{,..}
+					Given group(s) doesn't exists
+			INSERT_CARD	Daemon is waiting for the card
+					to be read
+			READ_TIMEOUT	Operation was aborted because of
+					card read timeout
+			GROUP_NOT_IN_CARD *group*,{...}
+					Given group(s) doesn't belong
+					to this card
+			OK		*group*(s) were succesfully removed
+					from the card
 
 	change-password *oldMainPassword* *newMainPassword*
 		Changes main password.
@@ -69,6 +103,6 @@ Available commands are:
 			INVALID_PWD	Given main password is invalid
 			OK		Main password was succesfully changed
 
-Keywords enclosed in stars [eg. *username*) are placeholders for certain parameters.
+Keywords enclosed in stars (eg. *username*) are placeholders for certain parameters.
 Parameters enclosed in square brackets are optional.
 In case of missing or invalid parameters, BAD_REQUEST message is returned.

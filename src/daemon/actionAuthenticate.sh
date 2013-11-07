@@ -49,15 +49,15 @@ if [ $cardStatus -eq 0 ]; then
 		fi
 	done < $cardsStorage
 
-	read -a sessionKey <<< $(IFS=' '; date +%s%Ns | md5sum)
-
-	exec 200>> $sessionsStorage
-	flock -x 200
-	IFS=',' echo "$sessionKey $user $groupsStr" >&200
-	flock -u 200
-	exec 200>&-
-
 	if [[ $found -eq 1 ]]; then
+		read -a sessionKey <<< $(IFS=' '; date +%s%Ns | md5sum)
+
+		exec 200>> $sessionsStorage
+		flock -x 200
+		IFS=',' echo "$sessionKey $user $groupsStr" >&200
+		flock -u 200
+		exec 200>&-
+		
 		printf "OK $sessionKey $groupsStr\n"
 	else
 		printf "OK\n"

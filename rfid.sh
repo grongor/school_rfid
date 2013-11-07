@@ -30,8 +30,10 @@ while true; do
 	case $action in
 	authenticate)    . src/client/actionAuthenticate.sh ;;
 	logout)          . src/client/actionLogout.sh ;;
-	grant)           . src/client/actionGrant.sh ;;
-	revoke)          . src/client/actionRevoke.sh ;;
+	grantUser)       . src/client/actionGrantUser.sh ;;
+	grantCard)       . src/client/actionGrantCard.sh ;;
+	revokeUser)      . src/client/actionRevokeUser.sh ;;
+	revokeCard)      . src/client/actionRevokeCard.sh ;;
 	change-password) . src/client/actionChangePassword.sh ;;
 	quit)            exit 0 ;;
 	esac

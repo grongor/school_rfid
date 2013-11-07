@@ -106,3 +106,4 @@ Available commands are:
 Keywords enclosed in stars (eg. *username*) are placeholders for certain parameters.
 Parameters enclosed in square brackets are optional.
 In case of missing or invalid parameters, BAD_REQUEST message is returned.
+
